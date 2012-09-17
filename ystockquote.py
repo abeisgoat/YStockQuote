@@ -48,14 +48,15 @@ yahoo_keys = {
     'short_ratio': 's7'
 }
 
-for key in yahoo_keys:
-    st = yahoo_keys[key]
-    globals()['get_%s' % key] = lambda sy: __request(sy, st)
 
 def __request(symbol, stat):
     url = 'http://finance.yahoo.com/d/quotes.csv?s=%s&f=%s' % (symbol, stat)
     return urllib.urlopen(url).read().strip().strip('"')
 
+def __build_get(st):
+    def __get(sy):
+        return __request(sy, st)
+    return __get
 
 def get_all(symbol):
     """
@@ -63,32 +64,18 @@ def get_all(symbol):
     
     Returns a dictionary.
     """
-    values = __request(symbol, 'l1c1va2xj1b4j4dyekjm3m4rr5p5p6s7').split(',')
+    values = __request(symbol, ''.join(yahoo_keys.values())).split(',')
     data = {}
-    data['price'] = values[0]
-    data['change'] = values[1]
-    data['volume'] = values[2]
-    data['avg_daily_volume'] = values[3]
-    data['stock_exchange'] = values[4]
-    data['market_cap'] = values[5]
-    data['book_value'] = values[6]
-    data['ebitda'] = values[7]
-    data['dividend_per_share'] = values[8]
-    data['dividend_yield'] = values[9]
-    data['earnings_per_share'] = values[10]
-    data['52_week_high'] = values[11]
-    data['52_week_low'] = values[12]
-    data['50day_moving_avg'] = values[13]
-    data['200day_moving_avg'] = values[14]
-    data['price_earnings_ratio'] = values[15]
-    data['price_earnings_growth_ratio'] = values[16]
-    data['price_sales_ratio'] = values[17]
-    data['price_book_ratio'] = values[18]
-    data['short_ratio'] = values[19]
+    for x, key in enumerate(yahoo_keys):
+        data[key] = values[x] 
     return data
     
 def get_historical_prices(symbol, start_datetime, end_datetime):
-
+    """
+    Get the historical prices for a given ticker symbol.
+    
+    Returns a nested list.
+    """
     start_date  = start_datetime.strftime("%Y%m%d") # Convert our nice Datetimes into Yahoo's date format
     end_date    = end_datetime.strftime("%Y%m%d")  # See above 
 
@@ -103,7 +90,7 @@ def get_historical_prices(symbol, start_datetime, end_datetime):
 
     url = 'http://ichart.yahoo.com/table.csv?s=%s&g=d&ignore=.csv' % symbol
     for key in request_data: 
-        url += '&%s=%s' % (key, request_data[key])
+        url += '&%s=%s' % (key, request_data[key]) # Create the URL based on request_data
 
     days = urllib.urlopen(url).readlines() # Load the CSV
     data = [day[:-2].split(',') for day in days] # Split the CSV sheet
@@ -121,3 +108,10 @@ def get_historical_prices(symbol, start_datetime, end_datetime):
         ]) # Convert everything to the right types
 
     return tdata
+
+def main():
+    for key in yahoo_keys:
+        st = yahoo_keys[key]
+        globals()['get_%s' % key] = __build_get(st) # Build new global functions for all the individual symbol attributes
+
+main()
