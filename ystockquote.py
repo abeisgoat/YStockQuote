@@ -69,6 +69,11 @@ def get_all(symbol):
     return data
 
 def get_moving_average(symbol, points):
+    """
+    Get a moving average from the previous points
+
+    Returns a float.
+    """
     url = "http://chartapi.finance.yahoo.com/instrument/1.0/%s/chartdata;type=sma/csv?period=%i" % (symbol, points)
     csv = urllib.urlopen(url).readlines()
     return float(csv[-1:][0].split(',')[1])
