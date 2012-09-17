@@ -46,6 +46,14 @@ yahoo_keys = {
     'short_ratio': 's7'
 }
 
+technical_keys = {
+    'moving_average': 'sma',
+    'exponential_moving_average': 'ema',
+    'money_flow_index': 'mfi',
+    'rate_of_change': 'roc',
+    'relative_strength_index': 'rfi',
+}
+
 
 def __request(symbol, stat):
     url = 'http://finance.yahoo.com/d/quotes.csv?s=%s&f=%s' % (symbol, stat)
@@ -55,6 +63,13 @@ def __build_get(st):
     def __get(sy):
         return __request(sy, st)
     return __get
+
+def __build_get_technical(technical):
+    def __get_technical(symbol, points):
+        url = "http://chartapi.finance.yahoo.com/instrument/1.0/%s/chartdata;type=%s/csv?period=%i" % (symbol, technical, points)
+        csv = urllib.urlopen(url).readlines()
+        return float(csv[-1:][0].split(',')[1])
+    return __get_technical
 
 def get_all(symbol):
     """
@@ -68,15 +83,7 @@ def get_all(symbol):
         data[key] = values[x] 
     return data
 
-def get_moving_average(symbol, points):
-    """
-    Get a moving average from the previous points
 
-    Returns a float.
-    """
-    url = "http://chartapi.finance.yahoo.com/instrument/1.0/%s/chartdata;type=sma/csv?period=%i" % (symbol, points)
-    csv = urllib.urlopen(url).readlines()
-    return float(csv[-1:][0].split(',')[1])
     
 def get_historical_prices(symbol, start_datetime, end_datetime):
     """
@@ -122,5 +129,9 @@ def main():
     for key in yahoo_keys:
         st = yahoo_keys[key]
         globals()['get_%s' % key] = __build_get(st) # Build new global functions for all the individual symbol attributes
+
+    for key in technical_keys:
+        technical = technical_keys[key]
+        globals()['get_%s' % key] = __build_get_technical(technical) # Build new global functions for all the individual symbol attributes
 
 main()
