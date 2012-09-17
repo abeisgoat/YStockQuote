@@ -6,9 +6,11 @@ An updated version of cgoldberg's Yahoo Finance library for Python.
 Updates
 -------
 
-* Code cleaned up and optimized. 
-* get_historical_prices() takes datetimes for start and end dates
-* get_historical_prices() now returns lists with proper datatypes
+* Cleaned up code and optimized. 
+* added get_moving_average() to get a moving average with of arbitrary points
+* removed get_50day_moving_average and get_200day_moving_average
+* modified get_historical_prices() to take datetimes for start and end dates
+* modified get_historical_prices() to returns lists with proper datatypes
 
 History
 -------

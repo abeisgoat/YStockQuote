@@ -39,8 +39,6 @@ yahoo_keys = {
     'earnings_per_share': 'e',
     '52_week_high': 'k',
     '52_week_low': 'j',
-    '50day_moving_average': 'm3',
-    '200day_moving_average': 'm4',
     'price_earnings_ratio': 'r',
     'price_earnings_growth_ratio': 'r5',
     'get_price_sales_ratio': 'p5',
@@ -69,6 +67,11 @@ def get_all(symbol):
     for x, key in enumerate(yahoo_keys):
         data[key] = values[x] 
     return data
+
+def get_moving_average(symbol, points):
+    url = "http://chartapi.finance.yahoo.com/instrument/1.0/%s/chartdata;type=sma/csv?period=%i" % (symbol, points)
+    csv = urllib.urlopen(url).readlines()
+    return float(csv[-1:][0].split(',')[1])
     
 def get_historical_prices(symbol, start_datetime, end_datetime):
     """
@@ -76,6 +79,7 @@ def get_historical_prices(symbol, start_datetime, end_datetime):
     
     Returns a nested list.
     """
+    # Date, Open, High, Low, Close, Volume, Adj
     start_date  = start_datetime.strftime("%Y%m%d") # Convert our nice Datetimes into Yahoo's date format
     end_date    = end_datetime.strftime("%Y%m%d")  # See above 
 
