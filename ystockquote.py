@@ -25,6 +25,32 @@ sample usage:
 529.46
 """
 
+yahoo_keys = {
+    'price': 'l1',
+    'change': 'c1',
+    'volume': 'v',
+    'average_daily_volume': 'a2',
+    'stock_exchange': 'x',
+    'market_cap': 'j1',
+    'book_value': 'b4',
+    'ebitda': 'j4',
+    'dividend_per_share': 'd',
+    'dividend_yield': 'y',
+    'earnings_per_share': 'e',
+    '52_week_high': 'k',
+    '52_week_low': 'j',
+    '50day_moving_average': 'm3',
+    '200day_moving_average': 'm4',
+    'price_earnings_ratio': 'r',
+    'price_earnings_growth_ratio': 'r5',
+    'get_price_sales_ratio': 'p5',
+    'price_book_ratio': 'p6',
+    'short_ratio': 's7'
+}
+
+for key in yahoo_keys:
+    st = yahoo_keys[key]
+    globals()['get_%s' % key] = lambda sy: __request(sy, st)
 
 def __request(symbol, stat):
     url = 'http://finance.yahoo.com/d/quotes.csv?s=%s&f=%s' % (symbol, stat)
@@ -60,87 +86,6 @@ def get_all(symbol):
     data['price_book_ratio'] = values[18]
     data['short_ratio'] = values[19]
     return data
-    
-    
-def get_price(symbol): 
-    return __request(symbol, 'l1')
-
-
-def get_change(symbol):
-    return __request(symbol, 'c1')
-    
-    
-def get_volume(symbol): 
-    return __request(symbol, 'v')
-
-
-def get_avg_daily_volume(symbol): 
-    return __request(symbol, 'a2')
-    
-    
-def get_stock_exchange(symbol): 
-    return __request(symbol, 'x')
-    
-    
-def get_market_cap(symbol):
-    return __request(symbol, 'j1')
-   
-   
-def get_book_value(symbol):
-    return __request(symbol, 'b4')
-
-
-def get_ebitda(symbol): 
-    return __request(symbol, 'j4')
-    
-    
-def get_dividend_per_share(symbol):
-    return __request(symbol, 'd')
-
-
-def get_dividend_yield(symbol): 
-    return __request(symbol, 'y')
-    
-    
-def get_earnings_per_share(symbol): 
-    return __request(symbol, 'e')
-
-
-def get_52_week_high(symbol): 
-    return __request(symbol, 'k')
-    
-    
-def get_52_week_low(symbol): 
-    return __request(symbol, 'j')
-
-
-def get_50day_moving_avg(symbol): 
-    return __request(symbol, 'm3')
-    
-    
-def get_200day_moving_avg(symbol): 
-    return __request(symbol, 'm4')
-    
-    
-def get_price_earnings_ratio(symbol): 
-    return __request(symbol, 'r')
-
-
-def get_price_earnings_growth_ratio(symbol): 
-    return __request(symbol, 'r5')
-
-
-def get_price_sales_ratio(symbol): 
-    return __request(symbol, 'p5')
-    
-    
-def get_price_book_ratio(symbol): 
-    return __request(symbol, 'p6')
-       
-       
-def get_short_ratio(symbol): 
-    return __request(symbol, 's7')
-    
     
 def get_historical_prices(symbol, start_datetime, end_datetime):
 
